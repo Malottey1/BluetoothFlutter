@@ -1,0 +1,96 @@
+buildscript {
+    ext.kotlin_version = '1.6.10' // or latest version
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.0.2' // or latest version
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.18' // or latest version
+    }
+}
+
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.protobuf" // Apply the Protobuf plugin
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+android {
+    namespace "com.example.bluetooth_ill"
+    compileSdk flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        applicationId "com.example.bluetooth_ill"
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version" // ensure correct kotlin stdlib
+    // Add any additional dependencies here
+}
+
+protobuf {
+    protoc {
+        // Path to the locally downloaded protoc binary
+        artifact = file('../Users/malcolmclottey/Downloads/protoc-27/bin/protoc')
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
